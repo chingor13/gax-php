@@ -46,6 +46,7 @@ use Google\Rpc\Code;
 use Grpc\BaseStub;
 use Grpc\Channel;
 use Grpc\ChannelCredentials;
+use Grpc\InterceptorChannel;
 use GuzzleHttp\Promise\Promise;
 
 /**
@@ -67,7 +68,7 @@ class GrpcTransport extends BaseStub implements TransportInterface
      *    Config options used to construct the gRPC transport.
      *
      *    @type array $stubOpts Options used to construct the gRPC stub.
-     *    @type Channel $channel Grpc channel to be used.
+     *    @type Channel|InterceptorChannel $channel Grpc channel to be used.
      * }
      * @return GrpcTransport
      * @throws ValidationException
@@ -88,7 +89,7 @@ class GrpcTransport extends BaseStub implements TransportInterface
             $stubOpts['credentials'] = ChannelCredentials::createSsl();
         }
         $channel = $config['channel'];
-        if (!is_null($channel) && !($channel instanceof Channel)) {
+        if (!is_null($channel) && !($channel instanceof Channel) && !($channel instanceof InterceptorChannel)) {
             throw new ValidationException(
                 "Channel argument to GrpcTransport must be of type \Grpc\Channel, " .
                 "instead got: " . print_r($channel, true)
